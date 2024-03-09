@@ -1,0 +1,8 @@
+ After downloading the file :-
+1. Make sure you have Python, Django, and code editor 
+2. After Installing go to cmd and install this libraries - nltk, spacy ( text processing), pdfplumber (extracting text from pdf) , and googletrans (translating).
+3. After this go to the Project_summary folder where manage.py is there and open command prmopt in that folder.
+4. In the command prompt you will run this command - python manage.py runserver and then you will get 127.0.0.1:8000 just press alt and click it.
+5.It will take you to webapplication.
+                                                                        
+                                                                        
