@@ -1,0 +1,1928 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fruit Game</title>
+    {% comment %} <link rel="stylesheet" href="{% static 'css/style.css' %}" /> {% endcomment %}
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-image: linear-gradient(30deg, #aca7d0, #0685e2);
+        overflow: hidden; /* Add this line to hide scrollbar */
+        font-family: Arial, Helvetica, sans-serif; /* Adjust margin as needed for spacing between label and amount */
+      }
+      
+      .game-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 100%; /* Adjust max-width as needed */
+        margin: 10px;
+        padding: 5px;
+        overflow: hidden;
+        /* Hide overflow content */
+        margin-top: 70px;
+        margin-bottom: 2px;
+      }
+      
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center contents horizontally */
+        justify-content: center; /* Center contents vertically */
+        background-image: linear-gradient(#bfbfbf, #923932);
+        padding: 8px;
+        border: 3px solid #47607b;
+        border-radius: 5px;
+        max-width: 89%; /* Adjust max-width as needed */
+        margin-top: 75px;
+        margin-left: 60px;
+      }
+      
+      .right-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+      
+      .fruit-item {
+        flex: 0 0 calc(16.666% - 10px); /* Each item takes approximately 1/6th of the container width with 10px gap */
+        margin-bottom: 2px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      
+      .fruit-item img {
+        max-width: 88%;
+        height: auto;
+      }
+      
+      .amount {
+        display: none;
+        /* Initially hide the amount */
+        position: absolute;
+        /* Add absolute positioning to the amount span */
+        top: 76%;
+        /* Position the amount span in the middle vertically */
+        left: 50%;
+        /* Position the amount span in the middle horizontally */
+        transform: translate(-50%, -50%);
+        /* Center the amount span */
+        /* Add a background color with transparency */
+        padding: 5px;
+        /* Add padding to the amount span */
+        border-radius: 5px;
+        /* Add border-radius for rounded corners */
+      }
+      
+      .amount b {
+        font-weight: bold;
+        margin-top: 85px;
+      }
+      
+      .button-container {
+        display: flex;
+        justify-content: space-around;
+        /* Distribute items evenly */
+        width: 748px;
+        /* Add margin at the bottom */
+        z-index: 2;
+        /* Set z-index to overlap */
+        position: relative;
+        /* Add relative positioning */
+        top: 20px;
+        bottom: 20px;
+        left: 30px;
+        /* Adjust top position as needed */
+      }
+      
+      /* Updated style for button items */
+      .button-container .button-item {
+        padding: 5px 20px;
+        /* Adjust padding for buttons */
+        border-radius: 5px;
+        /* Add border-radius for rounded corners */
+        background-color: rgb(122, 34, 34);
+        color: white;
+        font-size: 12px;
+        cursor: pointer;
+        border: 2px solid white;
+        margin-inline: 10px;
+      }
+      
+      .betting-container .button-item:hover {
+        box-shadow: 0 0 10px 2px rgb(242, 242, 196);
+        /* Add box-shadow for glowing effect */
+        border-radius: 50%;
+        /* Make the border-radius 50% for a circular shape */
+      }
+      
+      .betting-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        background-image: linear-gradient(#bfbfbf, #923932);
+        width: 759px;
+        padding-inline: 5px;
+        padding-block: 10px;
+        border: 3px solid#6b829d;
+        border-radius: 5px;
+        margin-left: 60px;
+        margin-top: 15px;
+      }
+      
+      /* Updated style for betting container button items */
+      .betting-container .button-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        margin-right: 10px;
+        margin-left: 10px;
+        /* Add margin between button items */
+      }
+      
+      .betting-container img {
+        width: 100px;
+        height: auto;
+        margin-bottom: 2px;
+        /* Adjust margin between image and text */
+      }
+      
+      .betting-container .button-item span {
+        position: absolute;
+        top: 47%;
+        font-size: 23px;
+        /* Position the span in the middle vertically */
+        left: 51%;
+        /* Position the span in the middle horizontally */
+        transform: translate(-50%, -50%);
+        padding: 5px;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        pointer-events: none;
+      }
+      
+      /* Style for the odd-upper-container and even-lower-container */
+      .odd-upper-container,
+      .even-lower-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        /* Center items horizontally */
+        width: 50%;
+        margin-bottom: 3px;
+      }
+      
+      .odd-upper-container {
+        justify-content: flex-start;
+        /* Align items to the start (left side) */
+      }
+      
+      .even-lower-container {
+        justify-content: flex-end;
+        /* Align items to the end (right side) */
+      }
+      
+      /* Add glow effect on hover for buttons in even-lower-container and odd-upper-container */
+      .even-lower-container .button-item:hover,
+      .odd-upper-container .button-item:hover {
+        box-shadow: 0 0 10px rgb(242, 242, 196);
+        /* Adjust glow effect as needed */
+      }
+      
+      /* Style for the text between containers */
+      .place-bet-text {
+        font-size: 15px;
+        width: 700px;
+        font-weight: bold;
+        margin: 0 auto;
+      
+        height: 18px;
+      
+        /* Center the text horizontally */
+        padding: 5px;
+        /* Add padding for better appearance */
+        color: white;
+        background-color: rgb(3, 210, 69);
+        border-radius: 5px;
+        text-align: center;
+        border: 2px solid rgb(251, 251, 194);
+        margin-bottom: 10px;
+      }
+      
+      .clear-container {
+        display: flex;
+        justify-content: center;
+        /* Center the clear button horizontally */
+        margin-top: 0px;
+        /* Add margin to separate it from other buttons */
+        width: 720px;
+      }
+      
+      .clear-button {
+        padding: 5px 10px;
+        border-radius: 5px;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        margin-inline: 5px;
+        width: 200px; /* Adjust the number of characters as needed */
+        background-image: linear-gradient(orange, red);
+        margin-bottom: 10px;
+        /* Shift the image 5px to the top and left */
+      }
+      
+      .clear-button:hover {
+        box-shadow: 0 0 10px 2px rgb(242, 242, 196);
+        border-radius: 10px;
+        /* Keep the border-radius consistent */
+      }
+      
+      .clear-button_print {
+        padding: 5px 10px;
+        border-radius: 5px;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        margin-inline: 5px;
+        width: 80px;
+        background-color: #19d539; /* Adjust the number of characters as needed */
+        margin-bottom: 10px;
+      }
+      
+      .clear-button_print:hover {
+        box-shadow: 0 0 10px 2px rgb(242, 242, 196);
+        border-radius: 10px;
+        /* Keep the border-radius consistent */
+      }
+      
+      #odd-button {
+        position: relative;
+        /* Add position relative to contain the text */
+      }
+      
+      #odd-button::before {
+        content: '1 3 5 7 11';
+        /* Add the text */
+        position: absolute;
+        /* Position the text */
+        top: -21px;
+        /* Adjust the distance from the button */
+        left: 50%;
+        /* Position in the middle horizontally */
+        transform: translateX(-50%);
+        /* Center horizontally */
+        color: white;
+        /* Set the text color to green */
+        font-size: 12px;
+        width: 58px;
+        background-color: rgb(3, 210, 69);
+        /* Adjust font size as needed */
+      }
+      
+      #even-button {
+        position: relative;
+        /* Add position relative to contain the text */
+      }
+      
+      #even-button::before {
+        content: '2 4 6 10 12';
+        /* Add the text */
+        position: absolute;
+        /* Position the text */
+        top: -20px;
+        /* Adjust the distance from the button */
+        left: 50%;
+        /* Position in the middle horizontally */
+        transform: translateX(-50%);
+        /* Center horizontally */
+        color: white;
+        /* Set the text color */
+        font-size: 12px;
+        width: 62px;
+        /* Adjust width as needed */
+        background-color: rgb(122, 34, 34);
+        /* Background color */
+      }
+      
+      #lower-button {
+        position: relative;
+        /* Add position relative to contain the text */
+      }
+      
+      #lower-button::before {
+        content: '6 7 10 11 12';
+        /* Add the text */
+        position: absolute;
+        /* Position the text */
+        top: -20px;
+        /* Adjust the distance from the button */
+        left: 50%;
+        /* Position in the middle horizontally */
+        transform: translateX(-50%);
+        /* Center horizontally */
+        color: white;
+        /* Set the text color */
+        font-size: 12px;
+        width: 68px;
+        /* Adjust width as needed */
+        background-color: rgb(3, 210, 69);
+        /* Background color */
+      }
+      
+      #upper-button {
+        position: relative;
+        /* Add position relative to contain the text */
+      }
+      
+      #upper-button::before {
+        content: '1 2 3 4 5 6';
+        /* Add the text */
+        position: absolute;
+        /* Position the text */
+        top: -20px;
+        /* Adjust the distance from the button */
+        left: 50%;
+        /* Position in the middle horizontally */
+        transform: translateX(-50%);
+        /* Center horizontally */
+        color: white;
+        /* Set the text color */
+        font-size: 12px;
+        width: 68px;
+        /* Adjust width as needed */
+        background-color: rgb(122, 34, 34);
+        /* Background color */
+      }
+      /* Slot machine container */
+      .slot-machine-container {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        display: inline-block; /* Ensures the container only takes up the necessary space */
+      
+        align-items: center;
+        margin-left: 40px; /* Keep the margin-left if needed */
+        margin-top: -100px; /* Adjust the margin-top to shift the container up */
+        z-index: 0; /* Set a lower z-index to ensure it's below the .reel-container */
+      }
+      
+      .spin-gif {
+        z-index: 1; /* Ensure the GIF appears above the slot machine image */
+      }
+      .slot-machine {
+        z-index: 0; /* Ensure the slot machine image appears below the GIF */
+      }
+      #reelContainer1 {
+        display: flex; /* Use flexbox to align items horizontally */
+        position: absolute; /* Position the container absolutely */
+        top: 50%; /* Position the container at the vertical center */
+        left: 50%; /* Position the container at the horizontal center */
+        transform: translate(-50%, -50%); /* Center the container */
+        z-index: 1; /* Ensure that this container appears above other content */
+      }
+      
+      /* Reel container */
+      .reel-container {
+        display: flex; /* Use flexbox to align reel items horizontally */
+      }
+      
+      /* Reel items */
+      .reel {
+        margin-left: 10px; /* Adjust the spacing between reel items */
+      }
+      
+      /* Adjust the margin of the first reel item to remove the left margin */
+      .reel:first-child {
+        margin-left: 0; /* Remove margin from the first reel item */
+      }
+      
+      /* Individual container for each reel */
+      #container1,
+      #container2,
+      #container3 {
+        display: none; /* Initially hide all containers */
+        position: relative; /* Set position to relative */
+        flex: 1; /* Each container takes equal space */
+      }
+      
+      .gif-container img,
+      .gif-container-2 img {
+        display: none;
+      }
+      
+      .reel:nth-child(1) {
+        left: 10px;
+        /* Adjust the left position for the first reel */
+      }
+      
+      .reel:nth-child(2) {
+        left: 150px;
+        /* Adjust the left position for the second reel */
+      }
+      
+      .reel:nth-child(3) {
+        left: 290px;
+        /* Adjust the left position for the third reel */
+      }
+      
+      /* Reel items */
+      .reel img,
+      #gifImage1,
+      #gifImage2,
+      #gifImage3 {
+        margin-top: 177px;
+        width: 108px; /* Set the width of the image */
+        height: 90px; /* Maintain aspect ratio */
+      }
+      
+      #reel4 img,
+      #reel5 img,
+      #reel6 img {
+        margin-top: 439px;
+        height: 50px;
+        width: 55px;
+      }
+      
+      .info {
+        position: fixed;
+        bottom: 40px;
+        left: 60px;
+        background-color: rgba(8, 13, 72, 0.8);
+        padding: 10px 15px;
+        border-radius: 5px;
+        border: 3px solid rgb(232, 166, 12);
+        /* Specify border style */
+      }
+      
+      #timer {
+        font-size: 18px;
+        font-weight: bold;
+        color: rgb(177, 213, 234);
+      }
+      .navbar {
+        position: fixed;
+        top: 0px;
+        left: 0;
+        width: 100%;
+        height: 20px; /* Adjust the height as needed */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 20px; /* Adjust padding as needed */
+        background-color: #4169e2;
+        color: white;
+        z-index: 9999;
+      }
+      
+      .balance-container {
+        display: flex;
+        align-items: center;
+        margin-left: 600px;
+        background-color: black;
+        width: 170px;
+        border: 2px solid white;
+        margin-right: 0px;
+        /* Add border ith desired style, color, and width */
+      }
+      
+      .balance-container label {
+        margin-right: 10px;
+        font-size: 20px;
+        padding: 2px 2px 2px 2px;
+      }
+      
+      .balance-container span {
+        color: white; /* Ensure the text color is white */
+        font-weight: bold;
+        padding-right: 5px;
+      }
+      
+      #add-balance-btn {
+        background-color: #c81818;
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+        margin-right: 90px;
+        margin-top: 0px;
+      }
+      
+      button {
+        clear: both;
+        display: block;
+        margin-top: 20px;
+      }
+      
+      /* Add this CSS style to set the same width for all buttons */
+      .clear-container .button-item {
+        width: 160px;
+        /* Adjust the width as needed */
+      }
+      
+      #clock {
+        position: fixed; /* Use fixed positioning to keep it in place */
+        top: 5px; /* Adjust the distance from the top to be below the navigation bar */
+        left: 0;
+        width: 10%;
+        font-size: 20px;
+        font-family: Arial, sans-serif;
+        color: white;
+        padding: 2px; /* Add padding for spacing */
+        text-align: center; /* Center the text */
+      }
+      
+      #ampm {
+        margin-left: 5px; /* Adjust the margin to separate AM/PM from the time */
+      }
+      
+      .total-amount-container {
+        position: absolute;
+        top: 500px; /* Adjust the top position to position it below the slot machine container */
+        left: -28px;
+        background-color: rgba(8, 13, 72, 0.8);
+        padding: 10px 15px;
+        border-radius: 2px;
+        border: 1px solid #c0c0c0;
+        display: inline-flex;
+        align-items: center;
+      }
+      
+      #selected-amount {
+        color: rgba(8, 13, 72, 0.8);
+      }
+      
+      #add-balance-btn:hover {
+        background-color: #ff6666;
+        /* Darken the color on hover */
+      }
+      
+      .hiscontainer {
+        position: fixed;
+        /* Position the container relative to the viewport */
+        top: 0px;
+        /* Adjust the distance from the top */
+        right: 5px;
+        height: 152px;
+        /* Adjust the distance from the right */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 999;
+        /* Ensure the container is above other elements */
+      }
+      .modal {
+        position: fixed; /* Ensure the modal is fixed relative to the viewport */
+        top: 171px;
+        left: 426px;
+        width: 100%; /* Cover the entire viewport width */
+        height: 100%; /* Cover the entire viewport height */
+        z-index: 9999; /* Ensure the modal appears in front of other elements */
+        display: flex; /* Use flexbox to center the modal content */
+        align-items: center; /* Center vertically */
+        justify-content: center; /* Center horizontally */
+        display: none; /* Hide the modal by default */
+      }
+      
+      .modal-content {
+        background-image: url('/static/images/popup_image.png');
+        background-size: cover; /* Ensure the entire image is visible without cropping */
+        background-position: center; /* Center the image within the container */
+        width: 30%; /* Adjust width as needed */
+        height: 35%; /* Adjust height as needed */
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      }
+      #winningMessageContent {
+        color: linear-gradient(to bottom, #999999, #336699); /* Grey to blue gradient */
+        font-size: 18px; /* Set font size */
+        text-align: center;
+        font-style: bold; /* Align text to the center */
+        margin-top: 75px; /* Remove default margin */
+      }
+      
+      #depositModal {
+        position: fixed;
+        top: 50%; /* Adjust top position as needed */
+        left: 55%; /* Adjust left position as needed */
+        transform: translate(-50%, -50%); /* Center the modal */
+        width: 45%; /* Adjust the width of the modal container */
+        height: 60%; /* Adjust the height of the modal container */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px; /* Optional: Add border radius */
+      }
+      
+      #modalContent {
+        width: 80%; /* Adjust the width of the modal content */
+        height: 80%; /* Adjust the height of the modal content */
+        padding: 20px;
+        border-radius: 10px; /* Optional: Add border radius */
+        background-color: #fff; /* Optional: Set background color */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional: Add box shadow */
+      }
+      
+      .centered {
+        margin-top: 70px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .custom-label {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+      
+      .custom-input {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        width: 200px; /* Adjust width as needed */
+      }
+      
+      .custom-button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      
+      .custom-button:hover {
+        background-color: #0056b3;
+      }
+      .close-button {
+        position: absolute;
+        top: 22px;
+        right: 99px;
+        font-size: 30px;
+        background-color: red;
+        border: none;
+        cursor: pointer;
+        color: white;
+        z-index: 999;
+      }
+      
+      .close-button:hover {
+        color: #333;
+      }
+      
+      .history-container {
+        display: flex;
+        flex-wrap: nowrap;
+        /* Prevent items from wrapping to the next line */
+        overflow-x: auto; /* Enable horizontal scrolling if needed */
+        margin-top: 55px;
+        margin-right: 10px;
+      }
+      .history-card {
+        transition: 0.3s;
+        width: 76px; /* Adjust width as needed */
+        /* Add other styles */
+        margin-right: 2px;
+      }
+      
+      .history-card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+      }
+      
+      .card-img-top {
+        height: 90px;
+        width: 100%;
+        margin-bottom: 0px;
+      }
+      
+      .slot-machine-image {
+        position: relative;
+      
+        width: 450px; /* Adjust width as needed */
+        height: 400px;
+      }
+      
+      .popup-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: pink;
+        padding: 20px;
+        border: 2px solid #ccc;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+      .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 32px;
+        height: 32px;
+        font-size: 24px;
+        color: #555;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+      }
+      
+      .close-btn:hover {
+        color: #333;
+      }
+      
+      .close-btn::before,
+      .close-btn::after {
+        content: '';
+        position: absolute;
+        width: 2px;
+        height: 100%;
+        background-color: #555;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      
+      .close-btn::before {
+        transform: translateX(-50%) rotate(45deg);
+      }
+      
+      .close-btn::after {
+        transform: translateX(-50%) rotate(-45deg);
+      }
+      .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr); /* Adjust the number of columns as needed */
+        gap: 15px; /* Adjust the gap between checkboxes as needed */
+      }
+      #place-bets-btn {
+        display: block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div style="display: flex; align-items: center;">
+        <img src="/static/images/logo1.png" style="margin-top: 10px; margin-right: 10px;" height="50px" width="50px" alt="Logo" />
+        <h4 style="margin-top: 20px;width: 200px; font-family: sans-serif; font-style: italic; margin-left: 20px;">For Amusement Only</h4>
+        <span id="welcome-message" style=" width: 150px;"></span>
+      </div>
+
+      <div class="balance-container" data-balance="{{ data.amount }}">
+        <label style="color: white; background-color: blue;">Balance:</label>
+        <span id="balance-amount" style="color: white;">{{ data.amount }}</span>
+      </div>
+
+      <button id="add-balance-btn" onclick="addBalance()">+</button>
+    </div>
+    <div style="margin-top: 60px; color: white;" id="clock">
+      <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span> <span id="ampm">AM</span>
+    </div>
+
+    <div class="slot-machine-container">
+      <div class="slot-machine-image">
+        <div style="position: relative; height: 450px;">
+          <img style="position: absolute; top: 14px; left: 0; height: 450px;" src="{% static 'images/slotmachine/slotmachine.png' %}" alt="Slot Machine" />
+          <img class="spin-gif" style="position: absolute; top: 231px; left: 15px; height: 113px;" src="{% static 'images/spin_container.gif' %}" alt="Spin Container GIF" />
+        </div>
+      </div>
+
+      <div id="reelContainer1">
+        <div id="container1" style="margin-right: 0px;">
+          <img id="gifImage1" src="" alt="Your GIF" />
+        </div>
+        <div id="container2" style="margin-left: 21px;">
+          <img id="gifImage2" src="" alt="Your GIF" />
+        </div>
+        <div id="container3" style="margin-left: 20px;">
+          <img id="gifImage3" src="" alt="Your GIF" />
+        </div>
+      </div>
+
+      <div id="reelContainer1">
+        <div class="reel-container" style="margin-top: 3px;">
+          <!-- Reel items -->
+          <div class="reel" id="reel1" style="margin-right: 0px;">
+            <img src="" alt="" />
+          </div>
+          <div class="reel" id="reel2" style="margin-left: 21px;">
+            <img src="" alt="" />
+          </div>
+          <div class="reel" id="reel3" style="margin-left: 20px;">
+            <img src="{% static 'images/1times.png' %}" alt="" />
+          </div>
+        </div>
+      </div>
+
+      <div id="reelContainer1" style="mix-blend-mode: multiply; margin-left: 15px;     filter: contrast(100%) brightness(100%);  ">
+        <div class="reel" id="reel4">
+          <img src="" alt="" />
+        </div>
+        <div class="reel" id="reel5">
+          <img src="" alt="" />
+        </div>
+        <div class="reel" id="reel6">
+          <img src="{% static 'images/1times.png' %}" alt="" />
+        </div>
+      </div>
+
+      <div class="total-amount-container" style="width:200px; margin-left: 220px; height:15px;" id="totalAmountContainer">
+        <b><label style="color: white;">Total Amount:</label></b>
+        <span id="total-amount" style="color: white;">0</span>
+        <span id="selected-amount"></span>
+      </div>
+
+      <div class="total-amount-container" style="margin-bottom: 80px; width: max-content; border-color: #c0c0c0; " id="timer"></div>
+
+      <div class="total-amount-container" style="color: white; margin-top: -40px; width: 200px; margin-left: 220px; height: 15px;" id="username-container"></div>
+    </div>
+
+    <!-- Winning message modal -->
+    <div id="winningModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeWinningModal()">&times;</span>
+        <p id="winningMessageContent"></p>
+      </div>
+    </div>
+
+    <div id="depositModal" class="modal" style="display: none;">
+      <div class="modal-content" id="modalContent">
+        <button id="closeModal" class="close-button">&times;</button> <!-- Close button -->
+        <div class="centered">
+          <label for="depositAmount" class="custom-label">Enter Deposit Amount:</label>
+          <input type="number" id="depositAmount" class="custom-input" placeholder="Enter amount..." />
+          <button id="confirmDeposit" class="custom-button">Confirm Deposit</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="popup" class="popup-content" style="display: none;">
+      <button class="close-btn" onclick="closePopup()"></button>
+      <h2>Select Bets in Advance</h2>
+      <div id="future-times-checkboxes" class="checkbox-grid">
+        <!-- Checkboxes for future times will be dynamically added here -->
+      </div>
+      <button id="place-bets-btn">Place Bets</button>
+    </div>
+    <div class="game-container">
+      <div class="hiscontainer">
+        <div id="history-container" class="history-container"></div>
+      </div>
+
+      <div class="container">
+        <div class="right-container">
+          <!-- Fruit items -->
+          {% for fruit in fruits %}
+            <div class="fruit-item" onclick="placeBet(this)">
+              <img src="{% static 'images/fruits/' %}{{ fruit }}.png" alt="{{ fruit }}" />
+              <span class="amount"><b>0</b></span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="button-container">
+        <!-- Container for Odd and Upper buttons -->
+        <div class="odd-upper-container">
+          <div class="button-item" style="background-color:rgb(3, 210, 69) ; color: black; border: 2px solid white;" id="odd-button" onclick="playAudio();selectOdd()">Odd</div>
+          <div class="button-item" id="upper-button" onclick="playAudio();selectUpper()">Upper</div>
+        </div>
+        <!-- Text between containers -->
+        <div class="place-bet-text">Place Your Chips</div>
+        <!-- Container for Even and Lower buttons -->
+        <div class="even-lower-container">
+          <div class="button-item" id="even-button" onclick="playAudio(); selectEven()">Even</div>
+          <div class="button-item" style="background-color:rgb(3, 210, 69) ; color: black; border: 2px solid white;" id="lower-button" onclick="playAudio();selectLower()">Lower</div>
+        </div>
+      </div>
+
+      <div class="betting-container">
+        <div class="button-item" data-amount="10" onclick="playAudio(); selectAmount(10);">
+          <img src="{% static 'images/amount/amount_10.png' %}" alt="10" />
+          <span>10</span>
+        </div>
+        <div class="button-item" data-amount="20" onclick="playAudio(); selectAmount(20);">
+          <img src="{% static 'images/amount/amount_50.png' %}" alt="20" />
+          <span>20</span>
+        </div>
+        <div class="button-item" data-amount="50" onclick="playAudio(); selectAmount(50);">
+          <img src="{% static 'images/amount/amount_10.png' %}" alt="50" />
+          <span>50</span>
+        </div>
+        <div class="button-item" data-amount="100" onclick="playAudio(); selectAmount(100);">
+          <img src="{% static 'images/amount/amount_100.png' %}" alt="100" />
+          <span>100</span>
+        </div>
+        <div class="button-item" data-amount="500" onclick="playAudio(); selectAmount(500);">
+          <img src="{% static 'images/amount/amount_500.png' %}" alt="500" />
+          <span>500</span>
+        </div>
+        <div class="button-item" data-amount="1000" onclick="playAudio(); selectAmount(1000);">
+          <img src="{% static 'images/amount/amount_100.png' %}" alt="1000" />
+          <span>1000</span>
+        </div>
+      </div>
+      <div class="clear-container">
+        <!-- Add the button element with the specified ID and onclick event -->
+        <button class="button-item clear-button" id="clear-button-1">Advance</button>
+        <button class="button-item clear-button" id="history-button" onclick="goToBetHistory();">Report</button>
+        <button class="button-item clear-button" id="clear-button-1" onclick="clearBets();">Clear</button>
+        <button class="button-item clear-button" id="refresh-button" onclick="refreshPage();">Refresh</button>
+        <button class="button-item clear-button_print history-button" onclick="generateAndOpenPDF();" style="background-image: #19d539;">Print</button>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    {% comment %} <script src="{% static 'js/main.js' %}"></script> {% endcomment %}
+
+    <script>
+        
+    
+const fruits = ["banana","apple" ,"lemon", "mango", "guava", "papaya", "pineapple","tomato", "chillie","lychee", "orange", "kiwi"];
+var selectedAmount = 0;
+// Get the value displayed in the span element and parse it as an integer
+var balance = parseInt(document.getElementById("balance-amount").textContent);
+
+// Now you can use the variable balance in your JavaScript code
+console.log("Balance:", balance);
+// Assuming you have the username variable defined in your JavaScript code
+var username = "nikhil";
+
+
+
+console.log("balAnce", balance)
+function refreshPage() {
+    location.reload();
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    var welcomeMessage = document.getElementById("welcome-message");
+    if (welcomeMessage) {
+        welcomeMessage.innerText = "Welcome, " + username;
+    }
+
+    // Update the username container
+    var usernameContainer = document.getElementById("username-container");
+    if (usernameContainer) {
+        usernameContainer.innerText = "Username : " + username;
+    }
+});
+
+
+const fruitNumberMapping = {};
+fruits.forEach((fruit, index) => {
+fruitNumberMapping[fruit] = index + 1; // Adding 1 to index to start numbering from 1
+});
+// Define the selectAmount function
+function selectAmount(amount) {
+selectedAmount = amount;
+var selectedAmountElement = document.getElementById("selected-amount");
+if (selectedAmountElement) {
+    selectedAmountElement.innerText = amount;
+} else {
+    console.error("Element with ID 'selected-amount' not found.");
+}
+}
+
+// Define and initialize the balance variable with a starting balance value
+
+
+function getCookie(name) {
+var cookieValue = null;
+if (document.cookie && document.cookie !== '') {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].trim();
+        // Check if the cookie contains the CSRF token
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+        }
+    }
+}
+return cookieValue;
+}
+
+// Update the balance amount in the balance container
+function updateBalance() {
+var balanceSpan = document.getElementById("balance-amount");
+if (balanceSpan) {
+    balanceSpan.innerText = balance;
+    updateBalanceInDatabase(balance); // Update balance in the database
+} else {
+    console.error("Element with ID 'balance-amount' not found.");
+}
+}
+
+// Update balance in the database
+function updateBalanceInDatabase(newBalance) {
+var csrftoken = getCookie('csrftoken');
+
+$.ajax({
+    url: '/update_balance/',
+    type: 'POST',
+    headers: { 'X-CSRFToken': csrftoken },
+    data: { new_balance: newBalance },
+    success: function (response) {
+        console.log('Balance updated successfully in the database.');
+    },
+    error: function (xhr, status, error) {
+        console.error('Error updating balance in the database:', error);
+    }
+});
+}
+
+// Call the updateBalance function to initialize the balance amount in the balance container
+updateBalance();
+
+function hideImages() {
+var imageContainers = document.querySelectorAll('.gif-container img, .gif-container-2 img');
+imageContainers.forEach(function(container) {
+    container.style.display = 'none';
+});
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+// Call the function to start the timer
+startTimer();
+});
+
+var timeLeft = 30; // Initial time in seconds (30 seconds)
+
+function startTimer() {
+var timeLeftFromStorage = localStorage.getItem('timeLeft');
+if (timeLeftFromStorage !== null) {
+  timeLeft = parseInt(timeLeftFromStorage, 10);
+  localStorage.removeItem('timeLeft'); // Clear the stored time after retrieval
+}
+var audio = new Audio('static/images/audio.wav');
+
+
+var timerDisplay = document.getElementById('timer');
+
+var countdownInterval = setInterval(function () {
+    // Calculate minutes and seconds from timeLeft
+    var minutes = Math.floor(timeLeft / 60);
+    var seconds = timeLeft % 60;
+
+    // Display the time in minutes and seconds format
+    timerDisplay.textContent = 'Time left: ' + minutes + ' : ' + seconds ;
+
+    if (timeLeft <= 0) {
+        clearInterval(countdownInterval); // Clear the interval if timeLeft is 0 or negative
+        timerDisplay.textContent = 'Time\'s up!';
+        console.log('Timer reached 0');
+        
+        
+    setTimeout(function() {
+            location.reload();
+        }, 5000);   
+        return;
+    }
+
+    timeLeft--;
+
+    if (timeLeft === 0) {
+        // Show the containers
+        document.getElementById("container1").style.display = "block";
+        document.getElementById("container2").style.display = "block";
+        document.getElementById("container3").style.display = "block";
+    
+        // Hide the reels
+        document.getElementById("reel1").style.display = "none";
+        document.getElementById("reel2").style.display = "none";
+        document.getElementById("reel3").style.display = "none";
+    
+        hideImages();
+        updateGifSources();
+    
+        // Check if the time left is 2 seconds or less, then start spinning reels
+        if (timeLeft <= 2) { // Change condition to 2 seconds or less
+            spinReels();
+            audio.play();
+        }
+    
+        // Add this line to show the images after 4 seconds
+        setTimeout(function() {
+            document.getElementById("reel1").style.display = "block";
+            document.getElementById("reel2").style.display = "block";
+            document.getElementById("reel3").style.display = "block";
+        }, 5000); // Change timeout to 4000 milliseconds
+    }
+    
+}, 1000); // Update the timer every second
+}
+
+// Function to update the source of GIFs for both containers
+function updateGifSources() {
+    // Return the GIF path based on the index of the current time
+    gifPaths = [
+    "{% static 'images/numgif.gif' %}",
+    "{% static 'images/Fruits.gif' %}",
+    "{% static 'images/times.gif' %}"
+    ]
+    var index = 30 - timeLeft; // Assuming the timer starts at 30 seconds
+
+    // Update the source of the first GIF
+    document.getElementById("gifImage1").src = gifPaths[index % gifPaths.length];
+
+    // Update the source of the second GIF
+    document.getElementById("gifImage2").src = gifPaths[(index + 1) % gifPaths.length];
+
+    document.getElementById("gifImage3").src = gifPaths[(index + 2) % gifPaths.length];
+}
+
+function generateAndOpenPDF() {
+// Construct the ticket string using fruitNumberMapping and betQuantities
+var ticketString = Object.keys(betQuantities).map(fruit => `${fruitNumberMapping[fruit]} x ${betQuantities[fruit]}`).join(', ');
+
+// Check if the ticket string is empty
+if (ticketString.trim() === '') {
+    console.log('Ticket string is empty. No PDF will be generated.');
+    return; // Exit the function if the ticket string is empty
+}
+
+// Define the ticket variable or retrieve it from the element if applicable
+var ticket = ticketString; // Assign ticketString to the ticket variable
+
+// Construct the URL for AJAX call
+var url = '/generate_pdf/?user=' + username + '&fruit=' + placedFruits.join(',') + '&quantity=' + globalquantity + '&amount=' + globalNewAmount + '&ticket=' + ticket;
+
+$.ajax({
+    type: 'GET',
+    url: url,
+    xhrFields: {
+        responseType: 'blob' // Set the response type to blob to handle binary data
+    },
+    success: function(response) {
+        // PDF generated successfully, create a temporary anchor element to download the PDF
+        var anchor = document.createElement('a');
+        var blob = new Blob([response], { type: 'application/pdf' });
+        var url = window.URL.createObjectURL(blob);
+        anchor.href = url;
+        anchor.download = 'ticket.pdf'; // Specify the file name for the downloaded PDF
+        anchor.click(); // Programmatically click the anchor element to trigger the download
+        window.URL.revokeObjectURL(url); 
+        
+        // Store remaining time in local storage
+        localStorage.setItem('timeLeft', timeLeft);
+
+        // Refresh the page after downloading the PDF, excluding the timer
+        setTimeout(function() {
+            location.reload();
+        }, 1000); // Delay the reload for 1 second to ensure PDF download completes
+    },
+    error: function(xhr, status, error) {
+        // Handle error
+        console.error(error);
+    }
+});
+}
+
+
+
+var bettingData = []; // Array to accumulate betting data for each fruit
+var betQuantities = {};
+var placedFruits = [];
+var username = "nikhil"; // Assuming this value is accessible
+var globalNewAmount = 0;
+var totalWinningAmount = 0;
+var globalquantity = 0
+
+function placeBet(element, betType) {
+
+if (!selectedAmount) {
+    selectedAmount = 10; // Set default amount to 10 if no amount is selected
+}
+
+var amountSpan = element.querySelector(".amount");
+var currentAmount = parseInt(amountSpan.innerText);
+var fruitName = element.querySelector("img").getAttribute("alt").toLowerCase();
+var quantity = betQuantities[fruitName] || 0; // Retrieve the quantity from betQuantities
+
+
+
+if (selectedAmount > 0 && selectedAmount <= balance) {
+var newAmount = currentAmount + selectedAmount;
+
+amountSpan.innerHTML = '<b style="font-size: 19px; margin-top:2px;">' + newAmount + '</b>'; // Adjust the font size as needed
+amountSpan.style.display = 'block';
+
+// Deduct the bet amount from the balance
+balance -= selectedAmount;
+console.log("New balance after deduction:", balance); // Log the new balance
+
+// Log the placed bet information
+if (betType) {
+console.log("Placed a bet of " + selectedAmount + " on " + betType);
+} else {
+console.log("Placed a bet of " + selectedAmount + " on " + fruitName);
+console.log("User:", username);
+console.log("Amount:", newAmount);
+console.log("Fruit:", fruitName);
+}
+
+// Update the balance amount in the balance container
+updateBalance();
+
+// Update the total amount
+var totalAmountElement = document.getElementById("total-amount");
+var currentTotalAmount = parseInt(totalAmountElement.innerText);
+var updatedTotalAmount = currentTotalAmount + selectedAmount;
+totalAmountElement.innerText = updatedTotalAmount;
+console.log("Total Amount:", updatedTotalAmount);
+
+// Update betQuantities with the selected amount
+betQuantities[fruitName] = quantity + selectedAmount; // Add the new amount to the existing quantity
+console.log("Updated Bet Quantities:", betQuantities);
+var quantities = [];
+
+// Iterate through the keys of betQuantities and push the values into quantities array
+Object.keys(betQuantities).forEach(function (fruit) {
+quantities.push(betQuantities[fruit]);
+});
+
+// Log the quantities array
+console.log("Quantities:", quantities);
+
+if (!placedFruits.includes(fruitName)) {
+placedFruits.push(fruitName);
+}
+
+globalNewAmount = updatedTotalAmount;
+globalquantity = quantities;
+ 
+} else {
+amountSpan.style.display = 'none';
+}
+
+
+}
+
+function clearBets() {
+// Clear bets from fruit images
+var fruitItems = document.querySelectorAll(".fruit-item");
+fruitItems.forEach(function (item) {
+    var amountSpan = item.querySelector(".amount");
+    var betAmount = parseInt(amountSpan.innerText);
+    amountSpan.innerText = '0';
+    amountSpan.style.display = 'none';
+
+    // Add the cleared bet amount back to the balance
+    balance += betAmount;
+});
+
+// Reset total amount to zero
+var totalAmountElement = document.getElementById("total-amount");
+totalAmountElement.innerText = '0';
+
+// Clear the relevant data structures
+betQuantities = {};
+placedFruits = [];
+globalNewAmount = 0;
+
+console.log('betQuantities', betQuantities);
+console.log('placedFruits',placedFruits);
+// Update the balance amount in the balance container
+updateBalance();
+}
+
+
+var hasSpunReels = false; // Define hasSpunReels and set it to false initially
+
+
+var spinning = false;
+
+setInterval(function () {
+if (!spinning && (Object.keys(betQuantities).length > 0 || !hasSpunReels)) {
+    spinReels();
+    hasSpunReels = true; // Update flag to indicate reels have been spun
+}
+}, 180000);
+
+
+var timerElement = document.getElementById("timer");
+var currentIndexes = [0, 0, 0];
+var bettingData = []; // Initialize bettingData array
+
+let completedReels = 0; // Declare completedReels outside of the spinReels function
+let winningMessages = []; // Define winningMessages array outside of the spinReels function
+
+function spinReels() {
+
+spinning = true; // Set spinning to true when spinReels starts
+
+let winningFruit = null;
+let lowerRowFruits = [];
+let chosenFruit = getChosenFruit();
+let totalWinningAmount = 0;
+bettingData = [];
+
+document.querySelectorAll('.right-container > .fruit-item:nth-child(n+6)').forEach((fruitItem) => {
+    lowerRowFruits.push(fruitItem.querySelector('img').getAttribute('alt').toLowerCase());
+});
+
+
+
+function displayWinningMessage(message) {
+    var winningModal = document.getElementById("winningModal");
+    var winningMessageContent = document.getElementById("winningMessageContent");
+    winningMessageContent.innerText = message;
+    winningModal.style.display = "block";
+}
+
+// Function to close the winning message modal
+function closeWinningModal() {
+    var winningModal = document.getElementById("winningModal");
+    winningModal.style.display = "none";
+}
+const reel1Symbols = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+const reel2Symbols = ["banana", "apple", "lemon", "mango", "guava", "papaya", "pineapple", "tomato", "chillie", "lychee", "orange", "kiwi"];
+const reel3Symbols = ["1times", "2times", "3times", "4times"];
+
+const reels = [
+    { reelElement: document.getElementById('reel1'), symbols: reel1Symbols },
+    { reelElement: document.getElementById('reel2'), symbols: reel2Symbols },
+    { reelElement: document.getElementById('reel3'), symbols: reel3Symbols }
+];
+
+const randomOffset = Math.floor(Math.random() * 11); // Generate a random offset between 0 and 10 (inclusive)
+const initialIndex = randomOffset % reel1Symbols.length; // Starting index for reel1
+
+reels.forEach((reel, index) => {
+const interval = setInterval(() => {
+    let newIndex;
+    if (index === 2) {
+        // For the third reel, introduce more randomness by using a combination of Math.random and Math.floor
+        newIndex = Math.floor(Math.random() * reel.symbols.length);
+    } else {
+        // Use the same random offset for the first two reels
+        newIndex = (initialIndex + currentIndexes[0]) % reel.symbols.length;
+        currentIndexes[0] += 0; // Increment the current index for the first reel
+    }
+    const symbol = reel.symbols[newIndex];
+    reel.reelElement.innerHTML = `<img src="{% static 'images/' %}${symbol}.png" alt="${symbol}">`;
+
+    const fruitName = symbol.split('.')[0];
+    if (fruits.includes(fruitName)) {
+        winningFruit = fruitName;
+    }
+}, 200);
+
+
+    setTimeout(() => {
+        clearInterval(interval);
+
+        completedReels++;
+        if (completedReels === reels.length) {
+            let winningMessage = 'Sorry, no winner this time. Try again!';
+            for (const fruit in betQuantities) {
+                if (betQuantities.hasOwnProperty(fruit) && fruit === winningFruit) {
+                    totalWinningAmount += betQuantities[fruit];
+                    winningMessage = `Congratulations! ${winningFruit} is the winner! \n You won ${totalWinningAmount} coins!`;
+                    winningMessages.push(winningMessage);
+                    break;
+                }
+            }
+
+            displayWinningMessage(winningMessage);
+            const fruitImageUrl = `static/images/${winningFruit}.png`; // Adjust the path as needed
+            console.log('The winning fruit is: ', fruitImageUrl);
+
+
+            console.log("Winning Fruit:", winningFruit);
+            console.log("Inside Spin Reels");
+            console.log("username:", username);
+            console.log("ticket:", betQuantities);  // Original dictionary
+            console.log("Amount:", globalNewAmount);
+            var quantitiesArray = Object.values(betQuantities);
+            var sum = quantitiesArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+            console.log("Quantities:", sum);
+            console.log("Placed Fruits:", placedFruits);
+            var placedFruitsString = placedFruits.join(', ');
+            console.log("Placed Fruits String:", placedFruitsString);
+            console.log("Selected Amount:", selectedAmount); // Log the value of selectedAmount
+            
+            console.log("reel1 image URL:", document.getElementById('reel1')?.querySelector('img')?.src);
+            console.log("reel3 image URL:", document.getElementById('reel3')?.querySelector('img')?.src);
+            
+
+            if (Object.keys(betQuantities).length > 0) {
+                var quantitiesArray = Object.values(betQuantities);
+                var sum = quantitiesArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+                var placedFruitsString = placedFruits.join(', ');
+                var ticketString = Object.keys(betQuantities).map(fruit => `${fruitNumberMapping[fruit]} x ${betQuantities[fruit]}`).join(', ');
+
+                bettingData.push({
+                    fruit: placedFruitsString,
+                    quantity: sum,
+                    amount: globalNewAmount,
+                    ticket: ticketString
+                });
+               
+                $.ajax({
+                    url: '/place_bet/',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    data: { betting_data: JSON.stringify(bettingData) },
+                    success: function (response) {
+                        console.log(response.message);
+                        bettingData = [];
+                        completedReels = 0;
+                        spinning = false; // Set spinning to false after successful bet placement
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error placing bets:', error);
+                    }
+                });
+            }
+            const resultImageMapping = {
+                banana: ["result1.png", "one.png"],
+                apple: ["result2.png", "two.png"],
+                lemon: ["result3.png", "three.png"],
+                mango: ["result4.png", "four.png"],
+                guava: ["result5.png", "five.png"],
+                papaya: ["result6.png", "six.png"],
+                pineapple: ["result7.png", "seven.png"],
+                tomato: ["result8.png", "eight.png"],
+                chillie: ["result9.png", "nine.png"],
+                lychee: ["result10.png", "ten.png"],
+                orange: ["result11.png", "eleven.png"],
+                kiwi: ["result12.png", "twelve.png"] // Add more mappings as needed
+            };
+            function getNumImageUrl(fruitName) {
+                if (resultImageMapping.hasOwnProperty(fruitName)) {
+                    return `static/images/${resultImageMapping[fruitName][1]}`;
+                } else {
+                    return ""; // Return empty string if fruit name is not found in the mapping
+                }
+            }
+            function getResultImageUrl(fruitName) {
+                if (resultImageMapping.hasOwnProperty(fruitName)) {
+                    return `static/images/${resultImageMapping[fruitName][0]}`;
+                } else {
+                    return ""; // Return empty string if fruit name is not found in the mapping
+                }
+            }
+
+            const numImageUrl = getNumImageUrl(winningFruit); // Get numImageUrl for the specified fruit name
+            console.log("numImageUrl:", numImageUrl);
+            
+            // Check if winningFruit is set correctly
+            console.log('winningFruit:', winningFruit);
+            
+            // Check if resultImageMapping contains the correct mappings
+            console.log('resultImageMapping:', resultImageMapping);
+            
+            
+          
+            const resultImageUrl = getResultImageUrl(winningFruit)
+
+            console.log("resultImageUrl:", resultImageUrl);
+
+            
+            
+            $.ajax({
+                url: '/add_bet_result/',
+                type: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                data: {
+                    user: "nikhil",
+                    winning_fruit: winningFruit,
+                    amount: totalWinningAmount,
+                    result_image_url: resultImageUrl,
+                    fruit_image_url: fruitImageUrl,
+                    number_image_url: numImageUrl
+                    // Add other data as needed
+                },
+
+            
+                success: function (response) {
+                    console.log(response.message);
+                    if (winningMessages.length === reels.length) {
+                        displayWinningMessage(winningMessages.join(' '));
+                        updateBalanceInDatabase(newBalance);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error adding bet result:', error);
+                }
+            });
+            
+            
+        } else {
+            console.error('Image URLs are null or undefined.');
+        }
+        
+        // Update the balance amount here
+        var balanceElement = document.getElementById('balance-amount');
+        console.log('balanceElement',balanceElement)
+
+        var currentBalance = parseFloat(balanceElement.innerText);
+        console.log('currentBalance',currentBalance)
+
+        var newBalance = currentBalance + (totalWinningAmount );
+        console.log('new_balance',newBalance)
+
+        balanceElement.innerText = newBalance.toFixed(2);
+        updateBalanceInDatabase(newBalance);
+    }, 4000);
+});
+}
+
+$(document).ready(function(){
+// Initialize total winning amount
+var totalWinningAmount = 0;
+$(document).ready(function(){
+    // Initialize total winning amount
+    var totalWinningAmount = 0;
+    $.ajax({
+        url: '/fetch_history/',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            // Handle successful response
+            if (response.bet_results.length > 0) {
+                // Get the latest result item from the response
+                var latestResultItem = response.bet_results[0];
+
+                // Define the result image mapping outside of the loop
+                const resultImageMapping = {
+                    banana: ["result1.png", "one.png", "banana.png"],
+                    apple: ["result2.png", "two.png", "apple.png"],
+                    lemon: ["result3.png", "three.png", "lemon.png"],
+                    mango: ["result4.png", "four.png", "mango.png"],
+                    guava: ["result5.png", "five.png", "guava.png"],
+                    papaya: ["result6.png", "six.png", "papaya.png"],
+                    pineapple: ["result7.png", "seven.png", "pineapple.png"],
+                    tomato: ["result8.png", "eight.png", "tomato.png"],
+                    chillie: ["result9.png", "nine.png", "chillie.png"],
+                    lychee: ["result10.png", "ten.png", "lychee.png"],
+                    orange: ["result11.png", "eleven.png", "orange.png"],
+                    kiwi: ["result12.png", "twelve.png", "kiwi.png"] // Add more mappings as needed
+                };
+
+                // Get the latest fruit from the result item
+                const fruit = latestResultItem.winning_fruit;
+                console.log('Fruit ', fruit);
+
+                const fruitResultImage = resultImageMapping[fruit][0];
+                const fruitNumberImage = `static/images/${resultImageMapping[fruit][1]}`;
+                console.log('Fruit Num',fruitNumberImage)
+                const fruitImage =  `static/images/${resultImageMapping[fruit][2]}`;
+
+                console.log('Fruit Image:', fruitImage);
+                document.getElementById('reel1').querySelector('img').src = fruitNumberImage;
+                document.getElementById('reel2').querySelector('img').src = fruitImage;
+            
+                document.getElementById('reel4').querySelector('img').src = fruitNumberImage;
+                document.getElementById('reel5').querySelector('img').src = fruitImage;
+
+
+                const reel1ImagePath = $('#reel1 img').attr('src');
+                const reel2ImagePath = $('#reel2 img').attr('src');
+                
+                // Append all history items to the "history" container
+                var historyContainer = $('#history-container');
+                historyContainer.empty(); // Clear previous history
+                response.bet_results.forEach(function(resultItem) {
+                    // Create a new history item with both fruit name, image, and winning amount
+                    const fruit = resultItem.winning_fruit;
+                    const fruitResultImage = resultImageMapping[fruit][0];
+                    const fruitNumberImage = resultImageMapping[fruit][1];
+                    const FruitImage = resultImageMapping[fruit][2];
+                    console.log('FruitImage',FruitImage);
+
+                    const winningFruitImageUrl = `/static/images/${fruitResultImage}`;
+                    const historyItem = $("<div class='history-card' style='position: relative;'>");
+                    const timestamp = $("<span style='position: absolute; font-size: 12px; top: 1px; left: 8px; font-weight: bold; background-color: #b4c0d6; padding: 5px;'>").text(resultItem.timestamp);
+                    const fruitImage = $("<img class='card-img-top' style='position: relative;'>").attr('src', winningFruitImageUrl);
+                    const fruitName = $("<p style='font-size: 0px;'>").text(resultItem.winning_fruit);
+
+                    historyItem.append(fruitImage, fruitName, timestamp);
+
+                    // Append the history item to the container
+                    historyContainer.append(historyItem);
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle error
+            console.error('Error fetching history:', error);
+        }
+    });
+});
+});
+
+function updateClock() {
+var currentTime = new Date();
+var hours = currentTime.getHours();
+var minutes = currentTime.getMinutes();
+var seconds = currentTime.getSeconds();
+
+// Convert hours to 12-hour format
+var meridiem = hours >= 12 ? 'PM' : 'AM';
+hours = hours % 12;
+hours = hours ? hours : 12; // Handle midnight (0 hours)
+
+// Add leading zeros to hours, minutes, and seconds if they are less than 10
+hours = ('0' + hours).slice(-2);
+minutes = ('0' + minutes).slice(-2);
+seconds = ('0' + seconds).slice(-2);
+
+// Update the clock display
+document.getElementById('hours').innerText = hours;
+document.getElementById('minutes').innerText = minutes;
+document.getElementById('seconds').innerText = seconds;
+
+// Update AM/PM indicator
+document.getElementById('ampm').innerText = meridiem;
+
+// Update the clock every second
+setTimeout(updateClock, 1000);
+}
+
+// Start updating the clock
+updateClock();
+
+
+function selectOdd() {
+var oddFruits = document.querySelectorAll(".fruit-item:nth-child(odd)");
+oddFruits.forEach(function (item) {
+    placeBet(item, "odd");
+});
+}
+
+function selectEven() {
+var evenFruits = document.querySelectorAll(".fruit-item:nth-child(even)");
+evenFruits.forEach(function (item) {
+    placeBet(item, "even");
+});
+}
+
+function selectLower() {
+var lowerFruits = document.querySelectorAll(".right-container > .fruit-item:nth-child(n+7)");
+lowerFruits.forEach(function (item) {
+    placeBet(item, "lower");
+});
+}
+
+function selectUpper() {
+var upperFruits = document.querySelectorAll(".right-container > .fruit-item:nth-child(-n+6)");
+upperFruits.forEach(function (item) {
+    placeBet(item, "upper");
+});
+}
+
+
+
+
+
+
+// Function to get a random fruit for the computer's choice     
+function getRandomFruit() {
+const fruits = ["banana","apple" ,"lemon", "mango", "guava", "papaya", "pineapple", "tomato","chiilie","lychee", "orange", "kiwi"]; // List of fruits on the second reel
+const randomIndex = Math.floor(Math.random() * fruits.length);
+return fruits[randomIndex];
+}
+
+// Function to get the chosen fruit
+function getChosenFruit() {
+let chosenFruit = "";
+
+// Find the chosen fruit
+document.querySelectorAll(".fruit-item").forEach((fruitItem) => {
+    var amountElement = fruitItem.querySelector(".amount b");
+    if (amountElement) {
+        var amount = parseInt(amountElement.innerText);
+        if (amount > 0) {
+            chosenFruit = fruitItem.querySelector("img").getAttribute("alt").toLowerCase();
+        }
+    }
+});
+
+return chosenFruit;
+}
+// JavaScript click event to display the modal
+var addButton = document.getElementById("add-balance-btn");
+addButton.onclick = function () {
+var depositModal = document.getElementById("depositModal");
+depositModal.style.display = "block";
+}
+
+
+// JavaScript click event to close the modal
+var closeModalButton = document.getElementById("closeModal");
+closeModalButton.onclick = function () {
+var depositModal = document.getElementById("depositModal");
+depositModal.style.display = "none";
+}
+
+// Close the modal when the user clicks anywhere outside of it
+window.onclick = function (event) {
+var depositModal = document.getElementById("depositModal");
+if (event.target == depositModal) {
+    depositModal.style.display = "none";
+}
+}
+
+
+document.getElementById("confirmDeposit").onclick = function () {
+var depositAmount = parseInt(document.getElementById("depositAmount").value);
+
+// Perform AJAX request to update balance
+var csrftoken = getCookie('csrftoken');
+
+$.ajax({
+    url: '/update_balance/',
+    type: 'POST',
+    headers: { 'X-CSRFToken': csrftoken },
+    data: { new_balance: depositAmount }, // Use depositAmount as the new balance
+    success: function (response) {
+        // Update the balance amount displayed on the main page
+        balance += depositAmount;
+        updateBalance(); // Update the balance displayed on the page
+        console.log('Deposit successful.');
+    },
+    error: function (xhr, status, error) {
+        console.error('Error depositing amount:', error);
+    }
+});
+
+// Close the modal after processing
+var depositModal = document.getElementById("depositModal");
+depositModal.style.display = "none";
+}
+
+// Define a function to play the audio
+function playAudio() {
+var audio = new Audio('static/images/buttonaudio.wav');
+audio.play();
+}
+
+// Add an event listener to the button element
+document.addEventListener('DOMContentLoaded', function() {
+var button = document.getElementById('myButton');
+if (button) {
+    button.addEventListener('click', function() {
+        // Call the playAudio function when the button is clicked
+        playAudio();
+    });
+}
+});
+// Function to generate time options
+function generateTimeOptions() {
+var futureTimesDiv = document.getElementById("future-times-checkboxes");
+futureTimesDiv.innerHTML = ""; // Clear previous checkboxes
+
+// Get current time
+var currentTime = new Date();
+var currentHour = currentTime.getHours();
+var currentMinute = currentTime.getMinutes();
+
+// Generate checkboxes for future times
+var numberOfOptions = 5 * 60 / 3; // 5 hours with a checkbox every 3 minutes
+for (var i = 0; i < numberOfOptions; i++) {
+    // Calculate future time
+    var futureHour = currentHour;
+    var futureMinute = currentMinute + (i * 3);
+    if (futureMinute >= 60) {
+        futureHour++;
+        futureMinute -= 60;
+    }
+    if (futureHour >= 24) {
+        futureHour -= 24;
+    }
+
+    // Format future time
+    var formattedTime = ("0" + futureHour).slice(-2) + ":" + ("0" + futureMinute).slice(-2);
+
+    // Create checkbox element
+    var checkboxLabel = document.createElement("label");
+    var checkboxInput = document.createElement("input");
+    checkboxInput.type = "checkbox";
+    checkboxInput.name = "future-time";
+    checkboxInput.value = formattedTime;
+    checkboxLabel.appendChild(checkboxInput);
+    checkboxLabel.appendChild(document.createTextNode(" " + formattedTime));
+    checkboxLabel.appendChild(document.createElement("br"));
+
+    // Append checkbox to futureTimesDiv
+    futureTimesDiv.appendChild(checkboxLabel);
+}
+}
+
+// Function to open the pop-up dialog box
+function openPopup() {
+var popup = document.getElementById("popup");
+popup.style.display = "block";
+}
+
+// Function to close the pop-up dialog box
+function closePopup() {
+var popup = document.getElementById("popup");
+popup.style.display = "none";
+}
+
+// Function to place bets based on selected future times
+function placeBets() {
+// Get all selected checkboxes
+var checkboxes = document.querySelectorAll('input[name="future-time"]:checked');
+
+// Place bets for each selected future time
+checkboxes.forEach(function(checkbox) {
+    var futureTime = checkbox.value;
+    // Place bets for the future time (e.g., using AJAX)
+    console.log("Placing bets for " + futureTime + " in advance...");
+});
+
+// Close the pop-up dialog box after placing bets
+closePopup();
+}
+
+// Function to open the pop-up and generate time options
+function openPopupAndGenerateTimeOptions() {
+openPopup();
+generateTimeOptions();
+}
+function closePopup() {
+document.getElementById('popup').style.display = 'none';
+}
+// Event listener for opening the pop-up and generating time options when the button is clicked
+document.getElementById("clear-button-1").addEventListener("click", openPopupAndGenerateTimeOptions);
+
+// Event listener for placing bets when the "Place Bets" button is clicked
+document.getElementById("place-bets-btn").addEventListener("click", placeBets);
+
+
+// Function to redirect the user to the bet history HTML page
+function goToBetHistory() {
+// Set a flag in sessionStorage to indicate that the user is viewing the bet history
+sessionStorage.setItem('viewingBetHistory', 'true');
+
+// Store the remaining time in localStorage
+localStorage.setItem('timeLeft', timeLeft);
+
+// Redirect the user to the bet history HTML page
+window.location.href = "/bet_History/";
+}
+
+// When the page loads
+window.addEventListener('load', function() {
+// Check if the user is currently viewing the bet history
+var viewingBetHistory = sessionStorage.getItem('viewingBetHistory');
+
+// If the user is viewing the bet history, retrieve the remaining time from localStorage
+if (viewingBetHistory === 'true') {
+    // Retrieve the remaining time from localStorage
+    var timeLeft = localStorage.getItem('timeLeft');
+    
+    // You can add any additional logic here as needed
+    // For example, restart the timer with the retrieved remaining time
+    
+    // Reset the flag
+    sessionStorage.removeItem('viewingBetHistory');
+    
+    // Clear the stored remaining time from localStorage
+    localStorage.removeItem('timeLeft');
+}
+});
+
+    </script>
+  </body>
+</html>

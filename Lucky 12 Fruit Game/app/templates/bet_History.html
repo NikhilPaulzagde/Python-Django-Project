@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bet History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: green;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: block;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+
+        .print-option button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .print-option button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Styles for printing */
+        @media print {
+            body {
+                background-color: #fff; /* Change background color for printing */
+            }
+
+            h1 {
+                text-align: left;
+                margin-top: 0;
+            }
+
+            table {
+                display: none; /* Hide the table when printing */
+            }
+
+            .back-button, .print-option {
+                display: none; /* Hide back button and print buttons when printing */
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="{% url 'index' %}" class="back-button">Back</a>
+    <h1>Report</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Fruit</th>
+                <th>Quantity</th>
+                <th>Amount</th>
+                <th>Ticket</th>
+                <th>Time</th>
+                <th>Print</th> <!-- New column for print option -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for bet in betting_history %}
+            <tr>
+                <td>{{ bet.user }}</td>
+                <td>{{ bet.fruit }}</td>
+                <td>{{ bet.quantity }}</td>
+                <td>{{ bet.amount }}</td>
+                <td>{{ bet.ticket }}</td>
+                <td>{{ bet.bet_time }}</td>
+                <td class="print-option">
+                    <button onclick="downloadPDF('{{ bet.user }}', '{{ bet.fruit }}', '{{ bet.quantity }}', '{{ bet.amount }}', '{{ bet.ticket }}', '{{ bet.bet_time }}')">Download PDF</button>
+                </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    <script>
+        function downloadPDF(user, fruit, quantity, amount, ticket, bet_time) {
+            // Construct the URL for downloading the PDF
+            var url = `/download_pdf/?user=${user}&fruit=${fruit}&quantity=${quantity}&amount=${amount}&ticket=${ticket}&bet_time=${bet_time}`;
+            
+            // Create a temporary anchor element to trigger the download
+            var anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = 'receipt.pdf'; // Specify the file name for the downloaded PDF
+            anchor.style.display = 'none'; // Hide the anchor element
+            document.body.appendChild(anchor); // Append the anchor element to the document body
+            anchor.click(); // Programmatically click the anchor element to trigger the download
+            document.body.removeChild(anchor); // Remove the anchor element from the document body
+        }
+    </script>
+    
+</body>
+</html>
