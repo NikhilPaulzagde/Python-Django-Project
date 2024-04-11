@@ -1,0 +1,829 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: linear-gradient(30deg, #aca7d0, #0685e2);
+    overflow: hidden; /* Add this line to hide scrollbar */
+    font-family:Arial, Helvetica, sans-serif;/* Adjust margin as needed for spacing between label and amount */
+
+}
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 100%; /* Adjust max-width as needed */
+            margin: 10px; 
+            padding: 5px;
+            overflow: hidden; 
+            /* Hide overflow content */
+            margin-top: 70px;  
+            margin-bottom: -20px;      
+}
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center contents horizontally */
+            justify-content: center; /* Center contents vertically */
+            background-image: linear-gradient(#bfbfbf, #923932);
+            padding: 10px;
+            border: 3px solid #47607b;
+            border-radius: 5px;
+            max-width: 90%; /* Adjust max-width as needed */
+            margin-top: 80px;
+            margin-left: 60px;
+        }
+        
+        
+       
+    
+        
+        
+        .right-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        
+        
+.fruit-item {
+    flex: 0 0 calc(16.666% - 10px); /* Each item takes approximately 1/6th of the container width with 10px gap */
+    margin-bottom: 2px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+        
+        .fruit-item img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .amount {
+            display: none;
+            /* Initially hide the amount */
+            position: absolute;
+            /* Add absolute positioning to the amount span */
+            top: 76%;
+            /* Position the amount span in the middle vertically */
+            left: 50%;
+            /* Position the amount span in the middle horizontally */
+            transform: translate(-50%, -50%);
+            /* Center the amount span */
+            /* Add a background color with transparency */
+            padding: 5px;
+            /* Add padding to the amount span */
+            border-radius: 5px;
+            /* Add border-radius for rounded corners */
+        }
+
+        .amount b {
+            font-weight: bold;
+            margin-top: 85px; 
+              }
+
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            /* Distribute items evenly */
+            width: 1000px;
+            /* Add margin at the bottom */
+            z-index: 2;
+            /* Set z-index to overlap */
+            position: relative;
+            /* Add relative positioning */
+            top: 13px;
+            bottom: 20px;
+            /* Adjust top position as needed */
+        }
+        
+
+        /* Updated style for button items */
+        .button-container .button-item {
+            padding: 5px 20px;
+            /* Adjust padding for buttons */
+            border-radius: 5px;
+            /* Add border-radius for rounded corners */
+            background-color: rgb(122, 34, 34);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border: 2px solid white;
+            margin-inline: 10px;
+        }
+
+        .betting-container .button-item:hover {
+            box-shadow: 0 0 10px 2px rgb(242, 242, 196);
+            /* Add box-shadow for glowing effect */
+            border-radius: 50%;
+            /* Make the border-radius 50% for a circular shape */
+        }
+
+        .betting-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            background-image: linear-gradient(#bfbfbf, #923932);
+            width: 1050px;
+            padding-inline: 10px;
+            padding-block: 15px;
+            border: 3px solid#6b829d;
+            border-radius: 5px;
+            margin-left: 60px;
+
+        }
+        
+
+        /* Updated style for betting container button items */
+        .betting-container .button-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin-right: 10px;
+            margin-left: 10px;
+            /* Add margin between button items */
+
+        }
+
+        .betting-container img {
+            width: 140px;
+            height: auto;
+            margin-bottom: 2px;
+            /* Adjust margin between image and text */
+            
+        }
+
+        .betting-container .button-item span {
+            position: absolute;
+            top: 47%;
+            font-size: 23px;
+            /* Position the span in the middle vertically */
+            left: 51%;
+            /* Position the span in the middle horizontally */
+            transform: translate(-50%, -50%);
+            padding: 5px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        /* Style for the odd-upper-container and even-lower-container */
+        .odd-upper-container,
+        .even-lower-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            /* Center items horizontally */
+            width: 50%;
+            margin-bottom: 3px;
+
+        }
+
+        .odd-upper-container {
+            justify-content: flex-start;
+            /* Align items to the start (left side) */
+        }
+
+        .even-lower-container {
+            justify-content: flex-end;
+            /* Align items to the end (right side) */
+        }
+
+        /* Add glow effect on hover for buttons in even-lower-container and odd-upper-container */
+        .even-lower-container .button-item:hover,
+        .odd-upper-container .button-item:hover {
+            box-shadow: 0 0 10px rgb(242, 242, 196);
+            /* Adjust glow effect as needed */
+        }
+
+        /* Style for the text between containers */
+        .place-bet-text {
+            font-size: 22px;
+            width: 800px;
+            font-weight: bold;
+            margin: 0 auto;
+            margin-bottom: 20px;
+            
+            /* Center the text horizontally */
+            padding: 5px;
+            /* Add padding for better appearance */
+            color: white;
+            background-color: rgb(3, 210, 69);
+            border-radius: 5px;
+            text-align: center;
+            border: 2px solid rgb(251, 251, 194);
+        }
+
+        .clear-container {
+            display: flex;
+            justify-content: center;
+            /* Center the clear button horizontally */
+            margin-top: 0px;
+            /* Add margin to separate it from other buttons */
+            width: 400px;
+        }
+
+       .clear-button {
+    padding: 5px 30px;
+    border-radius: 5px;
+    color: white;
+    font-size: 25px;
+    cursor: pointer;
+    margin-inline: 5px;
+    width: 100px; /* Adjust the number of characters as needed */
+    background-image: linear-gradient(orange, red);
+    margin-bottom: 10px;
+/* Shift the image 5px to the top and left */
+}
+
+        
+
+        .clear-button:hover {
+            box-shadow: 0 0 10px 2px rgb(242, 242, 196);
+            border-radius: 10px;
+            /* Keep the border-radius consistent */
+        }
+
+        .clear-button_print {
+            padding: 10px 30px;
+            border-radius: 5px;
+            color: white;
+            font-size: 25px;
+            cursor: pointer;
+            margin-inline: 5px;
+            width: 10ch; 
+            background-color: #19d539;/* Adjust the number of characters as needed */
+            margin-bottom: 10px;
+        }
+        
+
+        .clear-button_print:hover {
+            box-shadow: 0 0 10px 2px rgb(242, 242, 196);
+            border-radius: 10px;
+            /* Keep the border-radius consistent */
+        }
+                
+
+        #odd-button {
+            position: relative;
+            /* Add position relative to contain the text */
+        }
+
+        #odd-button::before {
+            content: "1 3 5 7 11";
+            /* Add the text */
+            position: absolute;
+            /* Position the text */
+            top: -21px;
+            /* Adjust the distance from the button */
+            left: 50%;
+            /* Position in the middle horizontally */
+            transform: translateX(-50%);
+            /* Center horizontally */
+            color: white;
+            /* Set the text color to green */
+            font-size: 12px;
+            width: 58px;
+            background-color: rgb(3, 210, 69);
+            /* Adjust font size as needed */
+        }
+        
+
+        #even-button {
+            position: relative;
+            /* Add position relative to contain the text */
+        }
+
+        #even-button::before {
+            content: "2 4 6 10 12";
+            /* Add the text */
+            position: absolute;
+            /* Position the text */
+            top: -20px;
+            /* Adjust the distance from the button */
+            left: 50%;
+            /* Position in the middle horizontally */
+            transform: translateX(-50%);
+            /* Center horizontally */
+            color: white;
+            /* Set the text color */
+            font-size: 12px;
+            width: 62px;
+            /* Adjust width as needed */
+            background-color: rgb(122, 34, 34);
+            /* Background color */
+        }
+
+        #lower-button {
+            position: relative;
+            /* Add position relative to contain the text */
+        }
+
+        #lower-button::before {
+            content: "6 7 10 11 12";
+            /* Add the text */
+            position: absolute;
+            /* Position the text */
+            top: -20px;
+            /* Adjust the distance from the button */
+            left: 50%;
+            /* Position in the middle horizontally */
+            transform: translateX(-50%);
+            /* Center horizontally */
+            color: white;
+            /* Set the text color */
+            font-size: 12px;
+            width: 68px;
+            /* Adjust width as needed */
+            background-color: rgb(3, 210, 69);
+            /* Background color */
+        }
+
+        #upper-button {
+            position: relative;
+            /* Add position relative to contain the text */
+        }
+
+        #upper-button::before {
+            content: "1 2 3 4 5 6";
+            /* Add the text */
+            position: absolute;
+            /* Position the text */
+            top: -20px;
+            /* Adjust the distance from the button */
+            left: 50%;
+            /* Position in the middle horizontally */
+            transform: translateX(-50%);
+            /* Center horizontally */
+            color: white;
+            /* Set the text color */
+            font-size: 12px;
+            width: 68px;
+            /* Adjust width as needed */
+            background-color: rgb(122, 34, 34);
+            /* Background color */
+        }
+      /* Slot machine container */
+.slot-machine-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    display: inline-block; /* Ensures the container only takes up the necessary space */
+
+    align-items: center;
+    margin-left: 40px; /* Keep the margin-left if needed */
+    margin-top: -100px; /* Adjust the margin-top to shift the container up */
+    z-index: 0; /* Set a lower z-index to ensure it's below the .reel-container */
+}
+
+
+
+
+.spin-gif {
+    height: 130px;
+
+
+    z-index: 1; /* Ensure the GIF appears above the slot machine image */
+}
+.slot-machine {
+    z-index: 0; /* Ensure the slot machine image appears below the GIF */
+}
+#reelContainer1 {
+    display: flex; /* Use flexbox to align items horizontally */
+    position: absolute; /* Position the container absolutely */
+    top: 50%; /* Position the container at the vertical center */
+    left: 50%; /* Position the container at the horizontal center */
+    transform: translate(-50%, -50%); /* Center the container */
+    z-index: 1; /* Ensure that this container appears above other content */
+}
+
+/* Reel container */
+.reel-container {
+    display: flex; /* Use flexbox to align reel items horizontally */
+}
+
+/* Reel items */
+.reel {
+    margin-left: 10px; /* Adjust the spacing between reel items */
+}
+
+/* Adjust the margin of the first reel item to remove the left margin */
+.reel:first-child {
+    margin-left: 0; /* Remove margin from the first reel item */
+}
+
+/* Individual container for each reel */
+#container1,
+#container2,
+#container3 {
+    display: none; /* Initially hide all containers */
+    position: relative; /* Set position to relative */
+    flex: 1; /* Each container takes equal space */
+}
+
+.gif-container img,
+.gif-container-2 img {
+    display: none;
+}
+
+
+
+        .reel:nth-child(1) {
+            left: 10px;
+            /* Adjust the left position for the first reel */
+        }
+
+        .reel:nth-child(2) {
+            left: 150px;
+            /* Adjust the left position for the second reel */
+        }
+
+        .reel:nth-child(3) {
+            left: 290px;
+            /* Adjust the left position for the third reel */
+        }
+
+   /* Reel items */
+.reel img, #gifImage1, #gifImage2, #gifImage3 {
+    margin-top: 115px;
+    width: 133px; /* Set the width of the image */
+    height: 113px; /* Maintain aspect ratio */
+}
+      
+#reel4 img,
+#reel5 img,
+#reel6 img {
+    margin-top: 410px;
+    height: 70px;
+    width: 75px;
+  
+}
+
+
+
+        .info {
+            position: fixed;
+            bottom: 40px;
+            left: 60px;
+            background-color: rgba(8, 13, 72, 0.8);
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 3px solid rgb(232, 166, 12);
+            /* Specify border style */
+        }
+
+        #timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: rgb(177, 213, 234);
+        }
+        .navbar {
+            position: fixed;
+            top: 0px;
+            left: 0;
+            width: 100%;
+            height: 20px; /* Adjust the height as needed */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px; /* Adjust padding as needed */
+            background-color: #4169e2;
+            color: white;
+            z-index: 9999;
+        }
+        
+        
+        .balance-container {
+            display: flex;
+            align-items: center;
+            margin-left: 1100px;
+            background-color: black;
+            width: 170px;
+            border: 2px solid white; 
+            margin-right: 0px;
+            /* Add border ith desired style, color, and width */
+        }
+        
+        
+        .balance-container label {
+            margin-right: 10px;
+            font-size: 20px;
+            padding: 2px 2px 2px 2px;
+        }
+        
+        .balance-container span {
+            color: white; /* Ensure the text color is white */
+            font-weight: bold; 
+            padding-right: 5px;
+        }
+        
+        
+
+#add-balance-btn {
+    background-color: #c81818;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    margin-right: 90px;
+    margin-top: 0px;
+
+}
+
+
+
+
+        button {
+            clear: both;
+            display: block;
+            margin-top: 20px;
+        }
+
+
+        /* Add this CSS style to set the same width for all buttons */
+        .clear-container .button-item {
+            width: 150px;
+            /* Adjust the width as needed */
+        }
+        
+
+        #clock {
+            position: fixed; /* Use fixed positioning to keep it in place */
+            top: 5px; /* Adjust the distance from the top to be below the navigation bar */
+            left: 0;
+            width: 10%;
+            font-size: 20px;
+            font-family: Arial, sans-serif;
+            color: white;
+            padding: 2px; /* Add padding for spacing */
+            text-align: center; /* Center the text */
+        }
+        
+        #ampm {
+            margin-left: 5px; /* Adjust the margin to separate AM/PM from the time */
+        }
+        
+        
+        .total-amount-container {
+            position: absolute;
+            top: 570px; /* Adjust the top position to position it below the slot machine container */
+            left: 20px;
+            background-color: rgba(8, 13, 72, 0.8);
+            padding: 10px 15px;
+            border-radius: 2px;
+            border: 1px solid #c0c0c0;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+
+        #selected-amount {
+            color: rgba(8, 13, 72, 0.8);
+
+        }
+
+       
+        #add-balance-btn:hover {
+            background-color: #ff6666;
+            /* Darken the color on hover */
+        }
+
+
+        
+
+
+
+       
+
+        .hiscontainer {
+            position: fixed;
+            /* Position the container relative to the viewport */
+            top: 0px;
+            /* Adjust the distance from the top */
+            right: 5px;
+            height: 210px;
+            /* Adjust the distance from the right */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            z-index: 999;
+            /* Ensure the container is above other elements */
+
+        }
+        .modal {
+            position: fixed; /* Ensure the modal is fixed relative to the viewport */
+            top: 200px;
+            left: 550px;
+            width: 100%; /* Cover the entire viewport width */
+            height: 100%; /* Cover the entire viewport height */
+            z-index: 9999; /* Ensure the modal appears in front of other elements */
+            display: flex; /* Use flexbox to center the modal content */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+            display: none; /* Hide the modal by default */
+        }
+        
+        .modal-content {
+            background-image: url('/static/images/popup_image.png');
+            background-size: cover; /* Ensure the entire image is visible without cropping */
+            background-position: center; /* Center the image within the container */
+            width: 30%; /* Adjust width as needed */
+            height: 35%; /* Adjust height as needed */
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        #winningMessageContent {
+            color: linear-gradient(to bottom, #999999, #336699); /* Grey to blue gradient */
+            font-size: 20px; /* Set font size */
+            text-align: center;
+            font-style: bold ; /* Align text to the center */
+            margin-top: 100px; /* Remove default margin */
+        }
+        
+        #depositModal {
+            position: fixed;
+            top: 50%; /* Adjust top position as needed */
+            left: 55%; /* Adjust left position as needed */
+            transform: translate(-50%, -50%); /* Center the modal */
+            width: 45%; /* Adjust the width of the modal container */
+            height: 60%; /* Adjust the height of the modal container */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px; /* Optional: Add border radius */
+        }
+        
+        #modalContent {
+            width: 80%; /* Adjust the width of the modal content */
+            height: 80%; /* Adjust the height of the modal content */
+            padding: 20px;
+            border-radius: 10px; /* Optional: Add border radius */
+            background-color: #fff; /* Optional: Set background color */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional: Add box shadow */
+            
+        }
+        
+        .centered {
+            margin-top: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+     
+        .custom-label {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .custom-input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            width: 200px; /* Adjust width as needed */
+        }
+        
+        .custom-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .custom-button:hover {
+            background-color: #0056b3;
+        }
+        .close-button {
+            position: absolute;
+            top: 40px;
+            right: 170px;
+            font-size: 30px;
+            background-color: red;
+            border: none;
+            cursor: pointer;
+            color: white;
+            z-index: 999;
+        }
+        
+        .close-button:hover {
+            color: #333;
+        }
+        
+        
+        .history-container {
+            display: flex;
+            flex-wrap: nowrap;
+            /* Prevent items from wrapping to the next line */
+            overflow-x: auto; /* Enable horizontal scrolling if needed */
+            margin-top: 55px; 
+            margin-right: 20px;
+
+        }
+        .history-card {
+            transition: 0.3s;
+            width: 109px; /* Adjust width as needed */
+            /* Add other styles */
+        }
+        
+
+        .history-card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .card-img-top {
+            height: 116px;
+            width: 93%;        
+            margin-bottom: 0px  ;
+        }
+       
+       
+        .slot-machine-image {
+            position: relative;
+            width: 450px; /* Adjust width as needed */
+            height: 400px;
+        }
+        
+        .popup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: pink;
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            font-size: 24px;
+            color: #555;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        
+        .close-btn:hover {
+            color: #333;
+        }
+        
+        .close-btn::before,
+        .close-btn::after {
+            content: "";
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background-color: #555;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .close-btn::before {
+            transform: translateX(-50%) rotate(45deg);
+        }
+        
+        .close-btn::after {
+            transform: translateX(-50%) rotate(-45deg);
+        }
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr); /* Adjust the number of columns as needed */
+            gap: 15px; /* Adjust the gap between checkboxes as needed */
+        }
+        #place-bets-btn {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }        
